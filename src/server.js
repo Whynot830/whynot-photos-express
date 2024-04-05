@@ -1,10 +1,22 @@
 const express = require('express')
+const cookieParser = require('cookie-parser')
+const cors = require('cors')
+const mongoose = require('mongoose')
 const app = express()
+
 const PORT = 5000
+const url = 'mongodb+srv://whynot:whynotishe@cluster0.qk3ma4g.mongodb.net/cwdb?retryWrites=true&w=majority'
 
 app.get('/', (req, res) => {
-    res.json({ message: 'main' })
+    res.json({ message: 'Server is working' })
 })
-app.listen(PORT, () => {
-    console.log(`Server is listening on port ${PORT}`);
-})
+
+
+app
+    .use(cors())
+    .use(express.json())
+    .use(cookieParser())
+
+mongoose.connect(url).then(() => {
+    app.listen(PORT, () => console.log(`Server is listening on port ${PORT}`))
+}).catch(err => console.log(err))
