@@ -1,10 +1,19 @@
+const service = require('../services/auth')
+
 class AuthController {
     async register(req, res, next) {
         try {
             const { username, email, password } = req.body
-            console.log(username, email, password);
-            res.status(200).json({ username, email, password })
-        } catch (err) { console.log(err) }
+            if (!username || !email || !password)
+                res.status(401).json({ message: "Some fields are empty" })
+            else {
+                await service.register(username, email, password)
+                res.sendStatus(200)
+            }
+
+        } catch (err) {
+            res.status(401).json({ message: err.message })
+        }
     }
     async activate(req, res, next) {
         try {
@@ -16,9 +25,11 @@ class AuthController {
     async login(req, res, next) {
         try {
             const { username, email, password } = req.body
-            console.log(username, email, password);
-            res.status(200).json({ username, email, password })
-        } catch (err) { console.log(err) }
+            const userData = await service.login(username, email, password)
+            res.status(200).json(userData)
+        } catch (err) {
+            res.status(401).json({ message: err.message })
+        }
     }
     async getInfo(req, res, next) {
         try {

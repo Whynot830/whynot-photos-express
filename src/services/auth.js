@@ -1,11 +1,35 @@
+const bcrypt = require('bcrypt')
+const UserModel = require("../models/user")
+
 class UserService {
     async register(username, email, password) {
+        const exists = await UserModel.findOne({ $or: [{ username }, { email }] })
+        if (exists)
+            throw Error('Email/username already taken')
 
+        const hashedPassword = await bcrypt.hash(password, 3)
+        const user = new UserModel({
+            username,
+            email,
+            password: hashedPassword
+        })
+        const savedUser = await user.save()
+        return savedUser
     }
     async activate(activationLink) {
 
     }
-    async login(email, password) {
+    async login(username, email, password) {
+        const user = await UserModel.findOne({ $or: [{ username }, { email }] })
+        if (!user)
+            throw Error('User not found')
+
+        try {
+            const passwordMatched = await bcrypt.compare(password, user.password)
+            if (!passwordMatched)
+                throw Error('Bad credentials')
+            return user
+        } catch (err) { throw Error('Bad credentials') }
 
     }
     async getInfo(id) {
