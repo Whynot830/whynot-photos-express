@@ -1,5 +1,7 @@
 const bcrypt = require('bcrypt')
+const uuid = require('uuid')
 const UserModel = require("../models/user")
+const mailService = require('./mail')
 
 class UserService {
     async register(username, email, password) {
@@ -8,16 +10,25 @@ class UserService {
             throw Error('Email/username already taken')
 
         const hashedPassword = await bcrypt.hash(password, 3)
+        const uid = uuid.v4()
+        await mailService.sendActivationMail(email, uid)
+        
         const user = new UserModel({
             username,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            activationLink: uid
         })
         const savedUser = await user.save()
         return savedUser
     }
     async activate(activationLink) {
+        const user = await UserModel.findOne({ activationLink })
+        if (!user)
+            throw Error('Invalid activation link')
 
+        user.isActivated = true
+        await user.save()
     }
     async login(username, email, password) {
         const user = await UserModel.findOne({ $or: [{ username }, { email }] })

@@ -18,9 +18,11 @@ class AuthController {
     async activate(req, res, next) {
         try {
             const { link } = req.params
-            console.log(link);
-            res.status(200).json({ link })
-        } catch (err) { console.log(err) }
+            await service.activate(link)
+            return res.redirect(process.env.CLIENT_URL)
+        } catch (err) {
+            res.status(400).json({ message: err.message })
+        }
     }
     async login(req, res, next) {
         try {

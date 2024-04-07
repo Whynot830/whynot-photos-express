@@ -4,9 +4,15 @@ const UserSchema = new Schema({
     username: String,
     email: String,
     password: String,
-    isActivated: Boolean,
+    isActivated: {
+        type: Boolean,
+        default: false
+    },
     activationLink: String,
-    role: String
+    role: {
+        type: String,
+        default: 'user'
+    }
 })
 
-module.exports = model("User", UserSchema)
+module.exports = model('User', UserSchema)
