@@ -1,5 +1,5 @@
 const service = require('../services/auth')
-
+const generateCookies = require('../utils/generateCookies')
 class AuthController {
     async register(req, res, next) {
         try {
@@ -10,7 +10,6 @@ class AuthController {
                 await service.register(username, email, password)
                 res.sendStatus(200)
             }
-
         } catch (err) {
             res.status(401).json({ message: err.message })
         }
@@ -28,7 +27,8 @@ class AuthController {
         try {
             const { username, email, password } = req.body
             const userData = await service.login(username, email, password)
-            res.status(200).json(userData)
+            generateCookies(res, userData)
+            res.sendStatus(200)
         } catch (err) {
             res.status(401).json({ message: err.message })
         }

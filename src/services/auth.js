@@ -1,7 +1,9 @@
 const bcrypt = require('bcrypt')
 const uuid = require('uuid')
 const UserModel = require("../models/user")
+const UserDTO = require('../dto/user')
 const mailService = require('./mail')
+const tokenService = require('../services/token')
 
 class UserService {
     async register(username, email, password) {
@@ -12,7 +14,7 @@ class UserService {
         const hashedPassword = await bcrypt.hash(password, 3)
         const uid = uuid.v4()
         await mailService.sendActivationMail(email, uid)
-        
+
         const user = new UserModel({
             username,
             email,
@@ -39,7 +41,10 @@ class UserService {
             const passwordMatched = await bcrypt.compare(password, user.password)
             if (!passwordMatched)
                 throw Error('Bad credentials')
-            return user
+
+            const userDto = new UserDTO(user)
+            const tokens = tokenService.generateTokens({ ...userDto })
+            return tokens
         } catch (err) { throw Error('Bad credentials') }
 
     }
