@@ -52,7 +52,12 @@ class UserService {
 
     }
     async refresh(refreshToken) {
+        const userData = tokenService.validateRefreshToken(refreshToken)
+        if (!userData)
+            throw Error('Invalid refresh token')
 
+        const tokens = tokenService.generateTokens({ ...userData })
+        return tokens
     }
 }
 

@@ -1,5 +1,6 @@
 const service = require('../services/auth')
 const generateCookies = require('../utils/generateCookies')
+
 class AuthController {
     async register(req, res, next) {
         try {
@@ -40,11 +41,16 @@ class AuthController {
     }
     async refresh(req, res, next) {
         try {
-            res.status(200).json({ message: "refresh endpoint" })
+            const { refreshToken } = req.cookies
+            const userData = await service.refresh(refreshToken)
+            generateCookies(res, userData)
+            res.sendStatus(200)
         } catch (err) { console.log(err) }
     }
     async logout(req, res, next) {
         try {
+            res.clearCookie('accessToken')
+            res.clearCookie('refreshToken')
             res.sendStatus(204)
         } catch (err) { console.log(err) }
     }
