@@ -3,6 +3,7 @@ const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const mongoose = require('mongoose')
 const authRouter = require('./routes/auth')
+const errorMiddleware = require('./middleware/error')
 
 const app = express()
 
@@ -18,6 +19,7 @@ app
     .use(express.json())
     .use(cookieParser())
     .use('/api/auth', authRouter)
+    .use(errorMiddleware)
 
 mongoose.connect(url).then(() => {
     app.listen(PORT, () => console.log(`Server is listening on port ${PORT}`))
