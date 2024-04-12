@@ -3,6 +3,7 @@ const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const mongoose = require('mongoose')
 const authRouter = require('./routes/auth')
+const imageRouter = require('./routes/images')
 const errorMiddleware = require('./middleware/error')
 
 const app = express()
@@ -19,6 +20,7 @@ app
     .use(express.json())
     .use(cookieParser())
     .use('/api/auth', authRouter)
+    .use('/api/images', imageRouter)
     .use(errorMiddleware)
 
 mongoose.connect(url).then(() => {
