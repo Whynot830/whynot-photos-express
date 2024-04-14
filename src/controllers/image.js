@@ -1,5 +1,5 @@
 const ApiError = require('../errors/api')
-const service = require('../services/images')
+const service = require('../services/image')
 
 class ImageController {
     async upload(req, res, next) {

@@ -1,6 +1,6 @@
 const { Router } = require('express')
 const authMiddleware = require('../middleware/auth')
-const controller = require('../controllers/images')
+const controller = require('../controllers/image')
 const upload = require('../utils/multer')
 
 const router = Router()
