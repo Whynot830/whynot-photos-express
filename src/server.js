@@ -3,7 +3,7 @@ const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const mongoose = require('mongoose')
 const authRouter = require('./routes/auth')
-const imageRouter = require('./routes/image')
+const imageRouter = require('./routes/images')
 const errorMiddleware = require('./middleware/error')
 
 const app = express()
