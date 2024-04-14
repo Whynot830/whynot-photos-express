@@ -5,7 +5,6 @@ const ImageSchema = new mongoose.Schema({
     filename: String,
     filePath: String,
     createdAt: Date,
-    // updatedAt: Date  
 })
 
 module.exports = mongoose.models.images || mongoose.model('Image', ImageSchema)

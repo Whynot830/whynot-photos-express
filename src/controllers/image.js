@@ -35,6 +35,9 @@ class ImageController {
     async delete(req, res, next) {
         try {
             const { id } = req.user
+            const { filename } = req.params
+            await service.delete(id, filename)
+            return res.sendStatus(204)
         } catch (err) { next(err) }
     }
 }

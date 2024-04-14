@@ -9,5 +9,7 @@ router.use(authMiddleware)
 router.post('/', upload.single('image'), controller.upload)
 router.get('/', controller.getImagesData)
 router.get('/:filename', controller.getImage)
+router.put('/:filename', controller.update)
+router.delete('/:filename', controller.delete)
 
 module.exports = router
