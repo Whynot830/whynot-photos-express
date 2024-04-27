@@ -25,7 +25,7 @@ class ImageService {
         console.log(userId, filename);
         const image = await ImageModel.findOneAndDelete({ userId, filename })
         if (!image)
-            throw ApiError.EntityNotFoundError('Image not found')
+            throw ApiError.EntityNotFound('Image not found')
         fs.unlink(image?.filePath, (err) => {
             if (err)
                 console.log(`[WARNING]: File ${filename} was not found on storage`);

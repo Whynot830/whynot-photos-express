@@ -35,17 +35,22 @@ class UserService {
     async login(username, email, password) {
         const user = await UserModel.findOne({ $or: [{ username }, { email }] })
         if (!user)
-            throw ApiError.BadRequest('User not found')
+            throw ApiError.Unauthorized('User not found')
         try {
             const passwordMatched = await bcrypt.compare(password, user.password)
+
             if (!passwordMatched)
-                throw ApiError.BadRequest('Bad credentials')
+                throw ApiError.Unauthorized('Bad credentials')
+            if (user.isActivated === false)
+                throw ApiError.Unauthorized('User is not activated. Check your email')
+
             const userDto = new UserDTO(user)
             const tokens = tokenService.generateTokens({ ...userDto })
-
             return tokens
         } catch (err) {
-            throw ApiError.BadRequest('Bad credentials')
+            if (err instanceof ApiError)
+                throw ApiError.Unauthorized(err.message)
+            throw ApiError.Unauthorized('Bad credentials')
         }
 
     }
@@ -56,11 +61,11 @@ class UserService {
     async refresh(refreshToken) {
         const userData = tokenService.validateRefreshToken(refreshToken)
         if (!userData)
-            throw ApiError.UnauthorizedError('Refresh token expired')
+            throw ApiError.Unauthorized('Refresh token expired')
 
         const user = await UserModel.findById(userData.id)
         if (!user)
-            throw ApiError.UnauthorizedError('Invalid refresh token')
+            throw ApiError.Unauthorized('Invalid refresh token')
 
         const userDto = new UserDTO(user)
         const tokens = tokenService.generateTokens({ ...userDto })

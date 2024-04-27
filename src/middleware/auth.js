@@ -7,17 +7,17 @@ module.exports = async (req, res, next) => {
         const accessToken = req.cookies.accessToken
         const userData = tokenService.validateAccessToken(accessToken)
         if (!userData)
-            return next(ApiError.UnauthorizedError())
+            return next(ApiError.Unauthorized())
 
         UserModel.findById(userData.id).then(user => {
             if (!user)
-                return next(ApiError.UnauthorizedError())
+                return next(ApiError.Unauthorized())
 
             req.user = user
             next()
         })
     }
     catch (e) {
-        return next(ApiError.UnauthorizedError)
+        return next(ApiError.Unauthorized)
     }
 }

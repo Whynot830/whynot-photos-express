@@ -10,10 +10,10 @@ module.exports = class ApiError extends Error {
     static BadRequest(message, errors = []) {
         return new ApiError(400, message, errors)
     }
-    static UnauthorizedError(message = 'Unauthorized') {
+    static Unauthorized(message = 'Unauthorized') {
         return new ApiError(401, message)
     }
-    static EntityNotFoundError(message = 'Entity not found') {
+    static EntityNotFound(message = 'Entity not found') {
         return new ApiError(404, message)
     }
 }
