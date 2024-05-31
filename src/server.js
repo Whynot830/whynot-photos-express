@@ -9,7 +9,6 @@ const errorMiddleware = require('./middleware/error')
 const app = express()
 
 const PORT = 5000
-const url = 'mongodb+srv://whynot:whynotishe@cluster0.qk3ma4g.mongodb.net/cwdb?retryWrites=true&w=majority'
 
 app.get('/', (req, res) => {
     res.json({ message: 'Server is working' })
@@ -23,6 +22,6 @@ app
     .use('/api/images', imageRouter)
     .use(errorMiddleware)
 
-mongoose.connect(url).then(() => {
+mongoose.connect(process.env.MONGO_URI).then(() => {
     app.listen(PORT, () => console.log(`Server is listening on port ${PORT}`))
 }).catch(err => console.log(err))
