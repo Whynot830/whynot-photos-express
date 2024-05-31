@@ -16,13 +16,21 @@ class ImageController {
             return res.json(images)
         } catch (err) { next(err) }
     }
+    async getImageData(req, res, next) {
+        try {
+            const { id } = req.user
+            const { filename } = req.params
+            const image = await service.getImagesData(id, filename)
+            return res.json(image)
+        } catch (err) { next(err) }
+    }
     async getImage(req, res, next) {
         try {
             const { id } = req.user;
             const { filename } = req.params;
             return res.sendFile(`/${id}/${filename}`, { root: 'uploads' }, (err) => {
                 if (err?.status === 404)
-                    return next(ApiError.EntityNotFoundError('Image not found'))
+                    return next(ApiError.EntityNotFound('Image not found'))
                 return next(err)
             })
         } catch (err) { next(err) }
@@ -37,6 +45,13 @@ class ImageController {
             const { id } = req.user
             const { filename } = req.params
             await service.delete(id, filename)
+            return res.sendStatus(204)
+        } catch (err) { next(err) }
+    }
+    async deleteAll(req, res, next) {
+        try {
+            const { id } = req.user
+            await service.deleteAll(id)
             return res.sendStatus(204)
         } catch (err) { next(err) }
     }

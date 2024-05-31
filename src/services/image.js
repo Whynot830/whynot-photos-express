@@ -9,20 +9,23 @@ class ImageService {
             userId,
             filename: file.filename,
             filePath: `uploads/${userId}/${file.filename}`,
-            createdAt: Date.now()
+            createdAt: Date.now(),
+            size: file.size
         })
         const savedImage = await image.save()
         return new ImageDTO(savedImage)
     }
-    async getImagesData(userId) {
-        const images = await ImageModel.find({ userId })
+    async getImagesData(userId, filename) {
+        if (!!filename) {
+            const image = await ImageModel.findOne({ userId, filename })
+            if (!image)
+                throw ApiError.EntityNotFound('Image not found')
+            return new ImageDTO(image)
+        }
+        const images = await ImageModel.find({ userId }).sort({ createdAt: -1 })
         return images.map((image) => new ImageDTO(image))
     }
-    async update() {
-
-    }
     async delete(userId, filename) {
-        console.log(userId, filename);
         const image = await ImageModel.findOneAndDelete({ userId, filename })
         if (!image)
             throw ApiError.EntityNotFound('Image not found')
@@ -31,6 +34,19 @@ class ImageService {
                 console.log(`[WARNING]: File ${filename} was not found on storage`);
         })
 
+    }
+    async deleteAll(userId) {
+        const images = await ImageModel.find({ userId })
+        if (images.length === 0)
+            return
+
+        images.forEach(async (image) => {
+            await ImageModel.findByIdAndDelete({ _id: image._id })
+            fs.unlink(image?.filePath, (err) => {
+                if (err)
+                    console.log(`[WARNING]: File ${image?.filename} was not found on storage`);
+            })
+        })
     }
 }
 
