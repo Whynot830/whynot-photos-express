@@ -5,20 +5,23 @@ const upload = require('../utils/multer')
 
 const router = Router()
 
-router.use(authMiddleware)
 
 router.route('/')
-    .get(controller.getImagesData)
-    .post(upload.single('image'), controller.upload)
-    .delete(controller.deleteAll)
+    .get(authMiddleware, controller.getImagesData)
+    .post(authMiddleware, upload.single('image'), controller.upload)
+    .delete(authMiddleware, controller.deleteAll)
+
+
+// Static serving (NGINX analog)
+router.route('/:userId/:filename')
+    .get(controller.getImage)
 
 router.route('/:filename')
-    .get((req, res, next) => {
+    .get(authMiddleware, (req, res, next) => {
         if (req.query.data)
             return controller.getImageData(req, res, next)
         return controller.getImage(req, res, next)
     })
-    .put(controller.update)
-    .delete(controller.delete)
+    .delete(authMiddleware, controller.delete)
 
 module.exports = router

@@ -26,18 +26,13 @@ class ImageController {
     }
     async getImage(req, res, next) {
         try {
-            const { id } = req.user;
+            const userId = req.user?.id ?? req.params.userId
             const { filename } = req.params;
-            return res.sendFile(`/${id}/${filename}`, { root: 'uploads' }, (err) => {
+            return res.sendFile(`/${userId}/${filename}`, { root: 'uploads' }, (err) => {
                 if (err?.status === 404)
                     return next(ApiError.EntityNotFound('Image not found'))
                 return next(err)
             })
-        } catch (err) { next(err) }
-    }
-    async update(req, res, next) {
-        try {
-            const { id } = req.user
         } catch (err) { next(err) }
     }
     async delete(req, res, next) {
