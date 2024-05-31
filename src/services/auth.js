@@ -46,7 +46,7 @@ class UserService {
 
             const userDto = new UserDTO(user)
             const tokens = tokenService.generateTokens({ ...userDto })
-            return tokens
+            return { user: { ...userDto }, tokens }
         } catch (err) {
             if (err instanceof ApiError)
                 throw ApiError.Unauthorized(err.message)

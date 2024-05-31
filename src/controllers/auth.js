@@ -24,9 +24,9 @@ class AuthController {
     async login(req, res, next) {
         try {
             const { username, email, password } = req.body
-            const userData = await service.login(username, email, password)
-            generateCookies(res, userData)
-            return res.sendStatus(200)
+            const { user, tokens } = await service.login(username, email, password)
+            generateCookies(res, tokens)
+            return res.json(user)
         } catch (err) { next(err) }
     }
     async getInfo(req, res, next) {
@@ -39,8 +39,8 @@ class AuthController {
     async refresh(req, res, next) {
         try {
             const { refreshToken } = req.cookies
-            const userData = await service.refresh(refreshToken)
-            generateCookies(res, userData)
+            const tokens = await service.refresh(refreshToken)
+            generateCookies(res, tokens)
             return res.sendStatus(200)
         } catch (err) { next(err) }
     }
