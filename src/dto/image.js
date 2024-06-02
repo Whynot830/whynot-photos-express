@@ -1,15 +1,17 @@
 module.exports = class ImageDTO {
     id
     filename
-    filePath
     createdAt
     size
-    
+    url
+    format
+
     constructor(model) {
-        this.id = model._id
+        this.id = model.assetId
         this.filename = model.filename
-        this.filePath = model.filePath
         this.createdAt = model.createdAt
         this.size = model.size
+        this.url = model.url
+        this.format = model.format
     }
 }
