@@ -12,10 +12,14 @@ class ImageService {
         const base64 = Buffer.from(file.buffer).toString('base64')
         const dataUri = `data:${file.mimetype};base64,${base64}`
 
+        let { originalname } = file
+        if (originalname.length > 20)
+            originalname = originalname.substr(0, 20)
+
         const { asset_id, public_id, type, version, created_at, original_filename, format, bytes, secure_url } = await cld.uploader.upload(
             dataUri,
             {
-                filename_override: file.originalname,
+                filename_override: originalname,
                 folder: `wnph_uploads/${userId}`
             })
 
@@ -55,7 +59,7 @@ class ImageService {
         const images = await ImageModel.find({ userId })
         if (images.length === 0)
             return
-        
+
         await cld.api.delete_resources_by_prefix(`wnph_uploads/${userId}`, { type: 'authenticated' })
 
         const deletePromises = images.map(image => ImageModel.findByIdAndDelete(image._id))
